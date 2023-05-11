@@ -7,7 +7,7 @@ console.log(ctx);
 class Particle {
   constructor(effect) {
     this.effect = effect;
-    this.radius = Math.random() * 5 + 2;
+    this.radius = Math.random() * 2 + 1;
     this.x =
       this.radius + Math.random() * (this.effect.width - this.radius * 2);
     this.y =
@@ -23,7 +23,6 @@ class Particle {
     context.strokeStyle = "hsl(" + this.x + ", 100%, 50%)";
     context.stroke();
     context.fill();
-    
   }
   update() {
     this.x += this.vx;
@@ -50,8 +49,11 @@ class Effect {
       let overlapping = false;
       for (let j = i; j < this.particles.length; j++) {
         const otherParticle = this.particles[j];
-        const distance = Math.hypot(newParticle.x - otherParticle.x, newParticle.y - otherParticle.y);
-        if (distance <=  newParticle.radius + otherParticle.radius) {
+        const distance = Math.hypot(
+          newParticle.x - otherParticle.x,
+          newParticle.y - otherParticle.y
+        );
+        if (distance <= newParticle.radius + otherParticle.radius) {
           overlapping = true;
           break;
         }
@@ -61,7 +63,7 @@ class Effect {
       }
     }
   }
-  
+
   handleParticles(context) {
     this.connectParticles(context);
     this.particles.forEach(particle => {
@@ -71,21 +73,23 @@ class Effect {
   }
 
   connectParticles(context) {
-    const maxDistance = 100;
+    const maxDistance = 60;
     for (let a = 0; a < this.particles.length; a++) {
       for (let b = a; b < this.particles.length; b++) {
         const dx = this.particles[a].x - this.particles[b].x;
         const dy = this.particles[a].y - this.particles[b].y;
         // const distance = Math.sqrt(dx * dx + dy * dy);
-        const distance = Math.hypot(dx, dy) ;
+        const distance = Math.hypot(dx, dy);
         if (distance <= maxDistance) {
           context.save();
+          
 
           const opacity = 1 - distance / maxDistance;
           context.globalAlpha = opacity;
-          const hue = (1  - opacity) * 360;
-          context.strokeStyle = "hsl(" + hue + ", 100%, 50%)";
+          const hue = 360 * (1 - opacity);
+          const brightness = 100 * (1 - opacity);
 
+          context.strokeStyle = "hsl(" + hue + ", 100%,"+ brightness +"%)";
           context.beginPath();
           context.moveTo(this.particles[a].x, this.particles[a].y);
           context.lineTo(this.particles[b].x, this.particles[b].y);
@@ -94,13 +98,16 @@ class Effect {
           context.restore();
         }
 
-
-
-
         if (distance < this.particles[a].radius + this.particles[b].radius) {
           const angle = Math.atan2(dy, dx);
-          const targetX = this.particles[a].x + Math.cos(angle) * (this.particles[a].radius + this.particles[b].radius);
-          const targetY = this.particles[a].y + Math.sin(angle) * (this.particles[a].radius + this.particles[b].radius);
+          const targetX =
+            this.particles[a].x +
+            Math.cos(angle) *
+              (this.particles[a].radius + this.particles[b].radius);
+          const targetY =
+            this.particles[a].y +
+            Math.sin(angle) *
+              (this.particles[a].radius + this.particles[b].radius);
           const ax = (targetX - this.particles[b].x) * 0.05;
           const ay = (targetY - this.particles[b].y) * 0.05;
           this.particles[b].vx -= ax;
@@ -108,9 +115,6 @@ class Effect {
           this.particles[a].vx += ax;
           this.particles[a].vy += ay;
         }
-
-
-
       }
     }
   }
