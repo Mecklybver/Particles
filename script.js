@@ -7,7 +7,7 @@ console.log(ctx);
 class Particle {
   constructor(effect) {
     this.effect = effect;
-    this.radius = Math.random() * 2 + 1;
+    this.radius = Math.random() * 2 + 3;
     this.x =
       this.radius + Math.random() * (this.effect.width - this.radius * 2);
     this.y =
@@ -137,3 +137,5 @@ addEventListener("resize", function() {
   effect.particles = [];
   effect.createParticles();
 });
+
+
